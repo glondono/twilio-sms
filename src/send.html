@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+
+<div class="sidebar branding-below">
+  <div class="block">
+    <span id="send-banner" style='color:red'></span>
+  </div>
+  <div class="block form-group">
+    <label for="send-message">
+      Message</label>
+    <textarea id="send-message" rows="15" maxlength="160" style="width:100%" value="">
+    </textarea>
+    <span id="send-left"></span>
+  </div>
+
+  <div class="block form-group">
+     <label for="send-cellphone">
+       Column with cellphone numbers.
+     </label>
+     <input id="send-cellphone" style='width:100%'/>
+  </div>
+
+  <div class="block form-group">
+    <input type="checkbox" id="send-reminder">
+    <label for="send-reminder">
+      ONLY to whom HAS NOT responded</label>
+  </div>
+  
+  <div class="block form-group" id="send-responses-block">
+     <label for="send-responses">
+        Column with responses
+     </label>
+     <input id="send-responses" style='width:100%' value=""/>
+  </div>
+  <div class="block">
+    <button id="send-send" class="blue">Send</button>
+  </div>
+
+</div>
+
+
+<script type="text/javascript">
+$(document).ready(function() {
+   var text_max = 100;
+   
+   $('#send-cellphone').val(<?= PropertiesService.getDocumentProperties().getProperty("CELLPHONES") ?>);
+   $('#send-responses').val(<?= PropertiesService.getDocumentProperties().getProperty("RESPONSES") ?>);
+   $('#send-reminder').val(<?= PropertiesService.getDocumentProperties().getProperty("REMINDER") ?>);
+   
+   $('#send-left').html(text_max + ' characters remaining');
+   $('#send-message').keyup(function() {
+       var text_length = $('#send-message').val().length;
+       var text_remaining = text_max - text_length;
+       $('#send-left').html(text_remaining + ' characters remaining');
+    });
+    $('#send-send').on("click", function(){
+        $('#send-send').prop("disabled", true);
+        $('#send-send').html("Sending...");
+        $('#send-banner').html("");
+        google.script.run.withSuccessHandler(done).withFailureHandler(error).send_send({
+           message: $('#send-message').val(),
+           cellphones: $('#send-cellphone').val(),
+           reminder: $('#send-reminder').prop("checked"),
+           responses: $('#send-responses').val()
+        });
+    });
+    $('#send-reminder').change(function(){
+       if($('#send-reminder').prop("checked") === true){
+          $('#send-responses-block').show();
+       } else {
+          $('#send-responses-block').hide();
+       }
+    });
+    $('#send-responses-block').hide();
+});
+
+function done(){
+   $('#send-send').prop("disabled", false);
+   $('#send-send').html("Send");
+   google.script.host.close();
+}
+
+
+function error(details){
+  $('#send-banner').html('Oh no, ' + details.message);
+  $('#send-send').prop("disabled", false);
+  $('#send-send').html("Send");
+}
+</script>
