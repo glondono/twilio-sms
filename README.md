@@ -1,5 +1,5 @@
 #Getting ready
-twilio-sms is an add-on for google sheet that use Twilio API to send SMS using cellphones numbers in a column. Also, it helps you collect responses for those SMS. You can use this app for marketing campaings, tracking volunteer schedules, coupon distrubtion and many other scenarios.
+twilio-sms is an add-on for google sheet that use Twilio API to send SMS using cellphones numbers in a column. Also, it helps you collect responses for those SMS. You can use this app for marketing campaings, tracking volunteer schedules, coupon distribution and many other scenarios.
 
 [Google add-on on chrome store](https://chrome.google.com/webstore/detail/jjaedddghkgdllndjomdnhahflbponfn/publish-review)
 
