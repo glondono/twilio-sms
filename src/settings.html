@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+<div class="sidebar">
+  <h2>Twilio account</h2>
+  <div class="block">
+    <span id="settings-banner" style='color:red'></span>
+  </div>
+  <div class="block form-group">
+    <label for="settings-account">
+      SID</label>
+    <input type="text" id="settings-account" style="width:100%" />
+  </div>
+  <div class="block form-group">
+    <label for="settings-token">
+      Auth Token</label>
+    <input type="text" id="settings-token" style="width:100%" />
+  </div>
+  <div class="block form-group">
+    <label for="settings-number">
+      Number</label>
+    <input type="text" id="settings-number" style="width:100%" />
+  </div>
+  <div class="block form-group">
+    <input type="checkbox" id="settings-history" checked>
+    <label for="settings-history">
+      Enable send and response history?</label>
+  </div>
+  <div class="block">
+    <button id="settings-update" type="submit" class="blue">Update</button>
+  </div>
+ 
+</div>
+
+
+<script type="text/javascript">
+$(document).ready(function() {
+   $('#settings-account').val(<?= PropertiesService.getDocumentProperties().getProperty("ACCOUNT") ?>);
+   $('#settings-token').val(<?= PropertiesService.getDocumentProperties().getProperty("TOKEN") ?>);
+   $('#settings-number').val(<?= PropertiesService.getDocumentProperties().getProperty("NUMBER") ?>);
+   $('#settings-update').on('click',function(){
+      $('#settings-update').prop("disabled", true);
+      $('#settings-update').html("Updating...");
+      $('#settings-banner').html("");
+      google.script.run.withSuccessHandler(done).withFailureHandler(error).settings_update({
+        account: $('#settings-account').val(),
+        token: $('#settings-token').val(),
+        number: $('#settings-number').val(),
+        history: $('#settings-history').prop("checked")
+      });
+   });
+});
+
+function done(){
+  $('#settings-update').prop("disabled", false);
+  $('#settings-update').html("Update");
+  google.script.host.close();
+}
+
+function error(details){
+  $('#settings-banner').html('Oh no, ' + details.message);
+  done();
+}
+
+</script>
+
