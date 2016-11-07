@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+
+<div class="sidebar branding-below">
+    <div class="block">
+    <span id="responses-banner" style='color:red'></span>
+  </div>
+   <div class="block form-group">
+     <label for="responses-cellphone">
+       Column with cellphone numbers
+     </label>
+     <input id="responses-cellphone" style='width:100%'/>
+  </div>
+  <div class="block form-group">
+     <label for="responses-responses">
+       Column to store the responses
+     </label>
+     <input id="responses-responses" style='width:100%'/>
+  </div>
+  <div class="block form-group">
+     <label for="responses-since">
+       Check new responses since
+     </label>
+     <input id="responses-since" style='width:100%' placeholder="yyyy-mm-dd"/>
+  </div>
+   <div class="block">
+    <button id="responses-get" class="blue">Get Responses</button>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+$(document).ready(function() {
+   $('#responses-cellphone').val(<?= PropertiesService.getDocumentProperties().getProperty("CELLPHONES") ?>);
+   $('#responses-responses').val(<?= PropertiesService.getDocumentProperties().getProperty("RESPONSES") ?>);
+   $('#responses-since').val(<?= PropertiesService.getDocumentProperties().getProperty("SINCE") ?>);
+   $('#responses-get').on('click', function(){
+      $('#responses-get').prop("disabled", true);
+      $('#responses-get').html("Getting...");
+      $('#responses-banner').html("");
+      google.script.run.withSuccessHandler(done).withFailureHandler(error).responses_get({
+           cellphones: $('#responses-cellphone').val(),
+           since: $('#responses-since').val(),
+           responses: $('#responses-responses').val()
+      });
+   });
+});
+
+function done(){
+   $('#responses-get').prop("disabled", false);
+   $('#responses-get').html("Get Responses");
+   google.script.host.close();
+}
+
+
+function error(details){
+  $('#responses-banner').html('Oh no, ' + details.message);
+  done();
+}
+</script>
